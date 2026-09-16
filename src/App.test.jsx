@@ -25,7 +25,7 @@ describe('App Component', () => {
 
     render(<App />)
 
-    const heading = screen.getByRole('heading', {
+    const heading = screen.getByRole('headin', {
       level: 2,
     })
 
