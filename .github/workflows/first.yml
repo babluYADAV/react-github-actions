@@ -3,6 +3,11 @@ name: "first workflow"
 
 on:
   push:
+  pull_request:
+    # branches:
+    #   - main
+    #   - dev
+    
 
 jobs:
   first-job:
