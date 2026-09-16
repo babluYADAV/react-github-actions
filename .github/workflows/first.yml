@@ -1,17 +1,57 @@
-
 name: "first workflow"
 
 on:
   push:
   pull_request:
+    #if you want to enable for specific branch
     # branches:
     #   - main
     #   - dev
-    
 
 jobs:
-  first-job:
+  lint-job:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependency
+        run: npm ci
+
+  test-job:
+    needs: [lint-job]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependency
+        run: npm ci
+
+      - name: run test cases of app
+        run: npm run test
+
+  build-job:
+    needs: [lint-job, test-job]
+    runs-on: ubuntu-latest
+   
+    env:
+       VERCEL_ORG_ID: "${{secrets.VERCEL_ORG_ID}}"
+       VERCEL_PROJECT_ID: "${{secrets.VERCEL_PROJECT_ID}}"
 
     steps:
       - name: Checkout repo
@@ -28,3 +68,20 @@ jobs:
 
       - name: Make React build
         run: npm run build
+
+      - name: create artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: dist/
+          retention-days: 7
+      
+    
+      - name: Install vercel cli
+        run: npm install --global vercel
+
+      - name: deploy to vercel
+        run: vercel deploy dist --prod --yes --token="${{secrets.VERCEL_TOKEN}}"
+
+
+    
