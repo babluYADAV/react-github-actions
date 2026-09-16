@@ -28,6 +28,7 @@ jobs:
         run: npm ci
 
   test-job:
+    needs: [lint-job]
     runs-on: ubuntu-latest
 
     steps:
@@ -48,6 +49,7 @@ jobs:
 
       
   build-job:
+    needs: [lint-job,test-job]
     runs-on: ubuntu-latest
 
     steps:
