@@ -4,6 +4,7 @@ name: "first workflow"
 on:
   push:
   pull_request:
+    #if you want to enable for specific branch
     # branches:
     #   - main
     #   - dev
@@ -25,6 +26,9 @@ jobs:
 
       - name: Install dependency
         run: npm ci
+
+      - name: run ESlint in the app
+        run: npm run lint
 
       - name: Make React build
         run: npm run build
